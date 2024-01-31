@@ -1,28 +1,22 @@
 package main
 
 import (
-	"fmt"
-	"io"
 	"log"
 	"net/http"
+	"os"
+
+	"main.go/handlers"
 )
 
 func main() {
 
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Hello World")
-		d, err := io.ReadAll(r.Body)
-		if err != nil {
-			http.Error(w, "oops", http.StatusBadRequest)
-			return
-		}
-		fmt.Fprintf(w, "Hello %s\n", d)
-		log.Printf("Data %s\n", d)
-	})
+	l := log.New(os.Stdout, "[prodcut-api] ", log.Flags())
+	hh := handlers.NewHello(l)
+	gh := handlers.NewGoodbye(l)
 
-	http.HandleFunc("/goodbye", func(w http.ResponseWriter, r *http.Request) {
-		log.Println("Good bye")
-	})
+	sm := http.NewServeMux()
+	sm.Handle("/", hh)
+	sm.Handle("/goodbye", gh)
 
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":8080", sm)
 }
