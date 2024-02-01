@@ -14,19 +14,22 @@ import (
 func main() {
 
 	l := log.New(os.Stdout, "[prodcut-api] ", log.Flags())
-	hh := handlers.NewHello(l)
-	gh := handlers.NewGoodbye(l)
 
+	// create the handlers
+	ph := handlers.NewProducts(l)
+
+	// create a new serve mux and register handlers
 	sm := http.NewServeMux()
-	sm.Handle("/", hh)
-	sm.Handle("/goodbye", gh)
+	sm.Handle("/", ph)
 
+	// create a new server
 	s := http.Server{
-		Addr:         ":8080",
-		Handler:      sm,
-		IdleTimeout:  120 * time.Second,
-		ReadTimeout:  1 * time.Second,
-		WriteTimeout: 1 * time.Second,
+		Addr:         ":8080",           // configure the bind address
+		Handler:      sm,                // set the default handler
+		ErrorLog:     l,                 // set the longer  for the server
+		ReadTimeout:  1 * time.Second,   // max time to read request from the client
+		WriteTimeout: 1 * time.Second,   // max time to write response to the client
+		IdleTimeout:  120 * time.Second, // max time for connections ysing TCP Keep-Alive
 	}
 	go func() {
 		err := s.ListenAndServe()
