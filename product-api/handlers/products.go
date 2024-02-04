@@ -3,7 +3,9 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strconv"
 
+	"github.com/gorilla/mux"
 	"main.go/data"
 )
 
@@ -24,7 +26,7 @@ func (p *Products) GetProducts(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (p *Products) addProduct(rw http.ResponseWriter, r *http.Request) {
+func (p *Products) AddProduct(rw http.ResponseWriter, r *http.Request) {
 	p.l.Println("Handle POST Product body")
 	prod := &data.Product{}
 	err := prod.FromJSON(r.Body)
@@ -36,10 +38,18 @@ func (p *Products) addProduct(rw http.ResponseWriter, r *http.Request) {
 	p.l.Printf("Prod: %#v", prod)
 }
 
-func (p *Products) updateProducts(id int, rw http.ResponseWriter, r *http.Request) {
+func (p *Products) UpdateProducts(rw http.ResponseWriter, r *http.Request) {
+
+	vars := mux.Vars(r)
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		http.Error(rw, "ID transalation failed", http.StatusBadRequest)
+		return
+	}
+
 	p.l.Println("Handle PUT Product body")
 	prod := &data.Product{}
-	err := prod.FromJSON(r.Body)
+	err = prod.FromJSON(r.Body)
 	if err != nil {
 		http.Error(rw, "Unable to unmarshal json", http.StatusInternalServerError)
 		return
