@@ -55,7 +55,7 @@ func (p *Products) UpdateProducts(rw http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		http.Error(rw, "Product not found", http.StatusNotFound)
+		http.Error(rw, "something is wrong", http.StatusInternalServerError)
 		return
 	}
 }
