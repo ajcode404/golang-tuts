@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/gorilla/mux"
 	"main.go/handlers"
 )
 
@@ -20,8 +21,11 @@ func main() {
 	ph := handlers.NewProducts(l)
 
 	// create a new serve mux and register handlers
-	sm := http.NewServeMux()
-	sm.Handle("/", ph)
+	sm := mux.NewRouter()
+
+	getRouter := sm.Methods("GET").Subrouter()
+	getRouter.HandleFunc("/", ph.GetProducts)
+	//sm.Handle("/products", ph)
 
 	// create a new server
 	s := http.Server{
