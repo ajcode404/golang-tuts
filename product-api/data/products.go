@@ -50,6 +50,7 @@ func UpdateProduct(id int, p *Product) error {
 	up.Name = p.Name
 	up.Price = p.Price
 	up.Description = p.Description
+	up.SKU = p.SKU
 	return nil
 }
 
